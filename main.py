@@ -1,7 +1,9 @@
 # documentation: https://discordpy.readthedocs.io/en/latest/
 
 import discord
-from players import *
+from player import Player
+from roles import *
+from game import Game
 
 client = discord.Client()
 
@@ -19,4 +21,5 @@ async def on_message(message):
 
 if __name__ == "__main__":
     #client.run(input("Enter token:"))
-    test()
+    game = Game()
+    

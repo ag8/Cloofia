@@ -1,0 +1,64 @@
+Class Player:
+    methods:
+        day_teachered()
+        night_teachered()
+        killed()
+
+    vars:
+        roles = (role1, role2)
+        is_assassin
+
+Interface Role:
+    methods:
+        night_role()
+        is_alive()
+        __str__()
+        usable() – Default: True (except special cases)
+        set_player()
+        upon_death()
+
+    vars:
+        is_used
+        player
+        night_teachered
+
+    Subclasses + their special cases:
+        Cupid: usable() False after night 1
+        Assassin x2:
+        Nurse:
+        Prostitute:
+        Scientist:
+        Cook: usable(), uses
+        Teacher: usable()
+        Angel: is_anyone_dead()
+        Gambler: turns_since_used() - implement last
+        Hunter: upon_death()
+        Ghost: upon_death()
+
+Game:
+    Board – dict()
+    day_teacher
+    night_teacher
+    order
+
+Set-up:
+    Shuffle list of 12 roles
+    Assign to players
+    List order of roles during night (`order`)
+
+Night:
+    Clear board
+    Go through `order` checking if role is alive + usable
+    night_role(self)
+    *special case: Assassins need to communicate
+
+    teacher(self.who_was_teachered) + clear who was teachered
+
+Day:
+    Vote
+
+
+Notes:
+ - keep track of Ghost vote
+ - Teacher
+ - Keep day count for cupid + gambler
