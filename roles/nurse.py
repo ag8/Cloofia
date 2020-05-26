@@ -2,10 +2,7 @@ from .role import Role
 
 class Nurse(Role):
     def __init__(self):
-        super().__init__()
-    
-    def night_play(self):
-        print("nurse night")
+        super().__init__("Nurse")
 
-    def __str__(self):
-        return("Nurse")
+    def night_role(self, game):
+        print("nurse night")

@@ -2,7 +2,7 @@ from .role import Role
 
 class Prostitute(Role):
     def __init__(self):
-        super().__init__()
+        super().__init__("Prostitute")
     
     def night_play(self):
         print("nurse night")

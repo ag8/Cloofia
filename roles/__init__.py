@@ -10,3 +10,4 @@ from .gambler import *
 from .ghost import *
 from .hunter import *
 from .cupid import *
+from .villager import *
