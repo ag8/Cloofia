@@ -8,7 +8,7 @@ class Role:
         self.is_used = False
         self.player = None
         self.night_teachered = False
-        self.is_alive = True
+        self.alive = True
 
     def night_role(self, game):
         pass
@@ -17,9 +17,12 @@ class Role:
         return self.alive
     
     def is_usable(self):
-        return self.is_alive and not self.is_used and not \
+        return self.alive and not self.is_used and not \
             self.night_teachered
     
+    def get_player(self):
+        return self.player
+
     def set_player(self, player):
         self.player = player
 
@@ -28,7 +31,7 @@ class Role:
 
     def kill(self):
         self.on_death()
-        self.is_alive = False
+        self.alive = False
         self.is_used = False
 
     def __str__(self):
