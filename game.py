@@ -12,6 +12,8 @@ class Game:
         self.client = client
         self.cups = dict()
         
+        self.CHANNEL_ID = 714714388166082573
+
         a1, a2, n = Assassin(), Assassin(), Nurse()
         roles = [a1, a2, n]
         roles += [Villager()] * 1
@@ -166,10 +168,7 @@ class Game:
             return None
     
     async def send_to_all(self, msg):
-        for channel in self.client.get_all_channels():
-            if channel.name == "general":
-                gen_channel = channel
-        await gen_channel.send(msg)
+        await self.client.get_channel(self.CHANNEL_ID).send(msg)
 
     async def read_vote(self):
         votes = dict()
@@ -179,7 +178,7 @@ class Game:
             votes_tally[player_id] = 0
 
         def _check(msg):
-            if hasattr(msg.channel, "name") and msg.channel.name == "general":
+            if msg.channel.id == self.CHANNEL_ID:
                 if msg.content.startswith("!vote"):
                     if msg.content.split(" ")[1].isdigit():
                         if int(msg.content.split(" ")[1]) in range(len(self.players)):
