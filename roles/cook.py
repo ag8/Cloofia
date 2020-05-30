@@ -11,11 +11,7 @@ class Cook(Role):
         await self.get_player().send_dm(f"You have {self.uses} uses left.\nChoose a player or type 'none' to skip your turn")
         
         def _check(msg):
-            if msg.author.name == self.player.get_name():
-                if msg.content.isdigit() and int(msg.content) in range(len(game.get_usernames())) or msg.content == "none":
-                    return True
-                else:
-                    print("not valid person")
+            return game.is_valid_player_digit(self.get_player(), msg) or msg.content == "none"
         
         player = await game.client.wait_for("message", check=_check)
 
@@ -37,6 +33,9 @@ class Cook(Role):
             card = await game.client.wait_for("message", check=_check2)
 
             await self.send_dm(str(game.players[int(player.content)].roles[int(card.content)]))
+
+            if self.uses == 1:
+                await self.night_role(game)
 
     def is_usable(self):
         return super().is_usable() and self.uses > 0

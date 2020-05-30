@@ -2,6 +2,7 @@ from player import Player
 from roles import *
 import random
 import copy
+import time
 
 from assassin_turn import assassin_turn
 from read_vote import read_vote
@@ -18,6 +19,7 @@ class Game:
         self.CHANNEL_ID = 714714388166082573
 
         a1, a2, n, c = [Assassin(), Assassin(), Nurse(), Cook()]
+
         roles = [a1, a2, n, c]
         #roles += [Villager()] * 1
         #random.shuffle(roles)
@@ -46,11 +48,15 @@ class Game:
             output += f"{player.get_name()}: {player.get_life()}\n"
         return output
     
+    def is_valid_player_digit(self, player, msg):
+        return msg.author.name == player.get_name() and msg.content.isdigit() and int(msg.content) in range(len(self.get_usernames()))
+    
     async def hear_player_digit(self, player):
         def _check(msg):
             if msg.author.name == player.get_name():
                 if msg.content.isdigit() and int(msg.content) in range(len(self.get_usernames())):
-                    return True
+                    if self.players[int(msg.content)].is_alive():
+                        return True
                 else:
                     print("not valid person")
             else:
@@ -72,7 +78,8 @@ class Game:
         players = self.get_usernames()
         output = str()
         for i in range(len(players)):
-            output += f"{players[i]} – {i}\n"
+            if self.player_from_name(players[i]).is_alive():
+                output += f"{players[i]} – {i}\n"
 
         return output
 
@@ -80,6 +87,9 @@ class Game:
         return list(player.get_name() for player in self.players)
 
     def is_game_won(self):
+        
+        return 0
+        
         """ Run after day/night to determine if game is over and who is_game_won
         Returns:
             0 --> keep playing
@@ -123,9 +133,9 @@ class Game:
             if str(this_role) != "Assassin":
                 if this_role.is_usable():
                     await this_role.night_role(self)
-                else:
-                    pass # maybe stall for a few seconds if teachered
-
+                elif this_role.is_alive():
+                    #time.sleep()
+                    print("Wait a random number of seconds")
             elif str(this_role) == str(self.order[i+1]):
                 await assassin_turn(self, (this_role, self.order[i+1]) )
                     

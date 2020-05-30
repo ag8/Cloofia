@@ -4,5 +4,5 @@ class Villager(Role):
     def __init__(self):
         super().__init__("Villager")
     
-    def night_play(self):
+    async def night_role(self, game):
         print("Villager night")

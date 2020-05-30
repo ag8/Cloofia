@@ -41,5 +41,5 @@ async def read_vote(game):
     if len(killed) >= 2:
         print("tie")
     else:
-        print(f"player killed is {killed[0]}")
+        print(f"player killed is {game.players[killed[0]]}")
         await game.players[killed[0]].kill_card(game)

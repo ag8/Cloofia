@@ -1,0 +1,5 @@
+- When killing a card check to make sure the card isn't already dead
+- Player w numbers check if alive
+- cook, allow to check two cards
+- set_permissions
+- announce the role of killed cards
