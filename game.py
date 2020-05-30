@@ -3,6 +3,9 @@ from roles import *
 import random
 import copy
 
+from assassin_turn import assassin_turn
+from read_vote import read_vote
+
 """
 Game class
 """
@@ -14,12 +17,12 @@ class Game:
         
         self.CHANNEL_ID = 714714388166082573
 
-        a1, a2, n = Assassin(), Assassin(), Nurse()
-        roles = [a1, a2, n]
-        roles += [Villager()] * 1
+        a1, a2, n, c = [Assassin(), Assassin(), Nurse(), Cook()]
+        roles = [a1, a2, n, c]
+        #roles += [Villager()] * 1
         #random.shuffle(roles)
 
-        self.order = [a1, a2, n]
+        self.order = [a1, a2, n, c]
 
         members = list()
         for user in client.users:
@@ -42,6 +45,18 @@ class Game:
         for player in self.players:
             output += f"{player.get_name()}: {player.get_life()}\n"
         return output
+    
+    async def hear_player_digit(self, player):
+        def _check(msg):
+            if msg.author.name == player.get_name():
+                if msg.content.isdigit() and int(msg.content) in range(len(self.get_usernames())):
+                    return True
+                else:
+                    print("not valid person")
+            else:
+                pass
+
+        return int((await self.client.wait_for("message", check=_check)).content)
 
     def clear_cups(self):
         for member in self.cups:
@@ -102,52 +117,6 @@ class Game:
         print(self.is_game_won())
 
 
-    async def assassin_turn(self, assassins):
-        """
-        input: assassins --> tuple with two assassins
-        
-        (1) assassins are the same player
-        (2) only one assassin is alive
-        (3) assassins are both alive, different players  """
-        print("assassassin night")
-
-        print(self.players_w_numbers())
-        
-        while True:
-            msg = await self.client.wait_for("message")
-
-            this_assassin = None
-            other_assassin = None
-
-            if msg.author.name == assassins[0].get_player().get_name():
-                this_assassin = assassins[0]
-                other_assassin = assassins[1]
-            elif msg.author.name == assassins[1].get_player().get_name():
-                this_assassin = assassins[1]
-                other_assassin = assassins[0]
-            else:
-                continue
-            
-            # todo: make sure the assassin is alive
-            if not this_assassin.is_alive():
-                continue
-
-            if msg.content.startswith("!choose"):
-                target = msg.content.split(" ")[1]
-                if msg.author.name == this_assassin.get_player().get_name() or msg.author.name == other_assassin.get_player().get_name():
-                    if target.isdigit() and int(target) in range(len(self.get_usernames())):
-                        self.cups[self.get_usernames()[int(target)]].append("A")
-                        break
-                    else:
-                        print("invalid person")
-                        continue
-            else: # Relay message
-                if this_assassin.get_player().get_name() == other_assassin.get_player().get_name():
-                    continue
-                await other_assassin.get_player().send_dm(f"[{this_assassin.get_player().get_name()}] {msg.content}")
-        print("assassin night over")
-        
-
     async def night(self):
         for i in range(len(self.order)):
             this_role = self.order[i]
@@ -158,7 +127,7 @@ class Game:
                     pass # maybe stall for a few seconds if teachered
 
             elif str(this_role) == str(self.order[i+1]):
-                await self.assassin_turn( (this_role, self.order[i+1]) )
+                await assassin_turn(self, (this_role, self.order[i+1]) )
                     
     def player_from_name(self, name):
         for player in self.players:
@@ -169,52 +138,6 @@ class Game:
     
     async def send_to_all(self, msg):
         await self.client.get_channel(self.CHANNEL_ID).send(msg)
-
-    async def read_vote(self):
-        votes = dict()
-        votes_tally = dict()
-        for player_id in range(len(self.players)):
-            votes[self.players[player_id].get_name()] = None
-            votes_tally[player_id] = 0
-
-        def _check(msg):
-            if msg.channel.id == self.CHANNEL_ID:
-                if msg.content.startswith("!vote"):
-                    if msg.content.split(" ")[1].isdigit():
-                        if int(msg.content.split(" ")[1]) in range(len(self.players)):
-                            return True
-            return False
-
-        voting_complete = False
-        while not voting_complete:
-            msg = await self.client.wait_for("message", check=_check)
-            votes[msg.author.name] = msg.content.split(" ")[1]
-
-            print(votes)
-    
-            all_votes_tallied = True
-            for player,vote in votes.items():
-                all_votes_tallied = all_votes_tallied and vote is not None
-            
-            voting_complete = all_votes_tallied
-        
-        for player in votes:
-            votes_tally[int(votes[player])] += 1
-
-        killed = []
-        killed_score = -1
-        for player,tally in votes_tally.items():
-            if tally > killed_score:
-                killed = [player]
-                killed_score = tally
-            elif tally == killed_score:
-                killed.append(player)
-        
-        if len(killed) >= 2:
-            print("tie")
-        else:
-            print(f"player killed is {killed[0]}")
-            await self.players[killed[0]].kill_card(self)
 
     async def end_night(self):
         print("starting end night")
@@ -230,4 +153,4 @@ class Game:
         print("ending night end")
 
     async def day(self):
-        await self.read_vote()
+        await read_vote(self)

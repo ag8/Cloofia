@@ -5,7 +5,7 @@ class Prostitute(Role):
         super().__init__("Prostitute")
     
     def night_play(self):
-        print("nurse night")
+        print("Prostitute Start")
 
     def __str__(self):
-        return("Nurse")
+        return("Prostitute")

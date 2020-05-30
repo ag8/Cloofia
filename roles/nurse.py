@@ -13,26 +13,11 @@ class Nurse(Role):
         await self.player.send_dm("Type the number next to the player you want to save.")
         """
 
-        # checks if message sent by right player
-        # checks that selection is valid
-        def _check(message):
-            if message.author.name == self.player.get_name():
-                if message.content.isdigit() and int(message.content) in range(len(game.get_usernames())):
-                    return True
-                else:
-                    print("not valid person")
-            else:
-                pass
-        print("\n---------------- \nNurse's Turn:")
-        print(game.players_w_numbers())
+        await self.send_dm("Nurses turn. Select the number next to the person you want to save.")
+        await self.send_dm(game.players_w_numbers())
 
         for _ in range(2):
-            message = await game.client.wait_for("message", check=_check)
-            saved = int(message.content)
+            saved = await game.hear_player_digit(self.get_player())
             player_saved = game.get_usernames()[saved]
             game.cups[player_saved].append("N")
-            print(f"{player_saved}'s cup: {game.cups[player_saved]}")
-
-
-    
-        
+            await self.send_dm(f"{player_saved}'s cup: {game.cups[player_saved]}")

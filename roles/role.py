@@ -29,6 +29,9 @@ class Role:
     def on_death(self):
         pass
 
+    async def send_dm(self, msg):
+        await self.player.send_dm(msg)
+
     def kill(self):
         self.on_death()
         self.alive = False
@@ -36,3 +39,4 @@ class Role:
 
     def __str__(self):
         return self.name
+    
