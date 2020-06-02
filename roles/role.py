@@ -16,6 +16,9 @@ class Role:
     def is_alive(self):
         return self.alive
     
+    def is_dead(self):
+        return not self.is_alive()
+    
     def is_usable(self):
         return self.alive and not self.is_used and not \
             self.night_teachered
@@ -26,14 +29,14 @@ class Role:
     def set_player(self, player):
         self.player = player
 
-    def on_death(self):
+    def on_death(self, game):
         pass
 
     async def send_dm(self, msg):
         await self.player.send_dm(msg)
 
-    def kill(self):
-        self.on_death()
+    def kill(self, game):
+        self.on_death(game)
         self.alive = False
         self.is_used = False
 

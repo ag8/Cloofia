@@ -4,8 +4,11 @@ class Prostitute(Role):
     def __init__(self):
         super().__init__("Prostitute")
     
-    def night_play(self):
-        print("Prostitute Start")
+    def night_role(self, game):
+        await self.send_dm(f"Lmao you freak choose someone to sleep with ^_^\n{game.players_w_numbers()}")
 
-    def __str__(self):
-        return("Prostitute")
+        target = game.players[int(await game.hear_player_digit(self.get_player()))].get_name()
+
+        game.cups[target].append("N")
+        
+        await self.send_dm(f"{target}'s cup: {game.cups[target]}")

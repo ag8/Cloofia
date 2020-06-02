@@ -42,11 +42,11 @@ class Player:
         if cards_left == 2:
             await self.send_dm("Which card do you want to kill? (0 or 1)")
             index = int(await self.hear_dm(game))
-            self.roles[index].kill()
+            self.roles[index].kill(game)
             self.life[index] = False
         elif cards_left == 1:
             index = self.life.index(True)
-            self.roles[index].kill()
+            self.roles[index].kill(game)
             self.life[index] = False
 
     def get_is_assassin(self):

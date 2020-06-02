@@ -16,6 +16,8 @@ class Game:
         self.client = client
         self.cups = dict()
         
+        self.lovers = tuple()
+
         self.CHANNEL_ID = 714714388166082573
 
         a1, a2, n, c = [Assassin(), Assassin(), Nurse(), Cook()]
@@ -42,6 +44,9 @@ class Game:
         
         self.is_assassin_turn = False
 
+    def set_lovers(self, roles):
+        self.lovers = roles
+
     def get_lives(self):
         output = ""
         for player in self.players:
@@ -49,7 +54,7 @@ class Game:
         return output
     
     def is_valid_player_digit(self, player, msg):
-        return msg.author.name == player.get_name() and msg.content.isdigit() and int(msg.content) in range(len(self.get_usernames()))
+        return msg.author.name == player.get_name() and msg.content.isdigit() and int(msg.content) in range(len(self.get_usernames())) and self.players[int(msg.content)].is_alive()
     
     async def hear_player_digit(self, player):
         def _check(msg):
@@ -57,8 +62,25 @@ class Game:
                 if msg.content.isdigit() and int(msg.content) in range(len(self.get_usernames())):
                     if self.players[int(msg.content)].is_alive():
                         return True
+                    else:
+                        print("Player is not alive")
                 else:
                     print("not valid person")
+            else:
+                pass
+
+        return int((await self.client.wait_for("message", check=_check)).content)
+
+    async def hear_card(self, player):
+        def _check(msg):
+            if msg.author.name == player.get_name():
+                if msg.content.isdigit() and int(msg.content) in range(2):
+                    if player[int(msg.content)].is_alive():
+                        return True
+                    else:
+                        print("Card is not alive")
+                else:
+                    print("not valid card")
             else:
                 pass
 
@@ -111,7 +133,7 @@ class Game:
         if good_count == 0 and assassins_count > 0:
             return 1
         if good_count == 0 and assassins_count == 0:
-            return 4
+            return 3
         if good_count > 0 and assassins_count > 0:
             return 0
         if good_count > 0 and assassins_count == 0:

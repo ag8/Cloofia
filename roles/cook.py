@@ -39,3 +39,6 @@ class Cook(Role):
 
     def is_usable(self):
         return super().is_usable() and self.uses > 0
+    
+    def replenish(self):
+        self.uses = 2

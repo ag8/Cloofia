@@ -1,3 +1,6 @@
+def is_dead_ghost(player):
+    return (player.roles[0].name == "ghost" and player.roles[0].is_dead()) or (player.roles[1].name == "ghost" and player.roles[1].is_dead())
+
 async def read_vote(game):
     votes = dict()
     votes_tally = dict()
@@ -26,8 +29,8 @@ async def read_vote(game):
         
         voting_complete = all_votes_tallied
     
-    for player in votes:
-        votes_tally[int(votes[player])] += 1
+    for player,vote in votes.items():
+        votes_tally[int(vote)] += 2 if is_dead_ghost(game.player_from_name(player)) else 1
 
     killed = []
     killed_score = -1
