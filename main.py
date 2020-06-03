@@ -17,7 +17,7 @@ async def on_ready():
     game = Game(client)
     await game.game_loop()
 
-        
+
 """
 
 @client.listen('test')

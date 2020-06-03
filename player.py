@@ -21,10 +21,10 @@ class Player:
 
     def get_user(self):
         return self.user
-    
+
     def get_name(self):
         return self.user.name
-    
+
     def get_life(self):
         return self.life
     """
@@ -57,21 +57,21 @@ class Player:
         for role in self.roles:
             if str(role) == "Assassin":
                 self.is_assassin = True
-    
+
     async def send_dm(self, msg):
         if self.user.dm_channel is None:
             await self.user.create_dm()
-        
+
         await self.user.dm_channel.send(msg)
-    
+
     async def hear_dm(self, game, check=None):
         if self.user.dm_channel is None:
             await self.user.create_dm()
-        
+
         def _check(msg):
             if msg.author.name == self.get_name():
                 if msg.content.isdigit() and int(msg.content) in (0, 1):
-                    
+
                     return True
             return False
 

@@ -15,7 +15,7 @@ class Game:
     def __init__(self, client):
         self.client = client
         self.cups = dict()
-        
+
         self.lovers = tuple()
 
         self.CHANNEL_ID = 714714388166082573
@@ -41,7 +41,7 @@ class Game:
         for i in range(0,len(members)):
             self.players.append(Player(members[i], (roles[2*i], roles[2*i+1])))
             print("player " + self.players[i].get_name() + " is " + self.players[i].roles[0].name + " and " + self.players[i].roles[1].name)
-        
+
         self.is_assassin_turn = False
 
     def set_lovers(self, roles):
@@ -52,10 +52,10 @@ class Game:
         for player in self.players:
             output += f"{player.get_name()}: {player.get_life()}\n"
         return output
-    
+
     def is_valid_player_digit(self, player, msg):
         return msg.author.name == player.get_name() and msg.content.isdigit() and int(msg.content) in range(len(self.get_usernames())) and self.players[int(msg.content)].is_alive()
-    
+
     async def hear_player_digit(self, player):
         def _check(msg):
             if msg.author.name == player.get_name():
@@ -88,7 +88,7 @@ class Game:
 
     def clear_cups(self):
         for member in self.cups:
-            self.cups[member] = list() 
+            self.cups[member] = list()
 
     def get_client(self):
         return self.client
@@ -109,9 +109,9 @@ class Game:
         return list(player.get_name() for player in self.players)
 
     def is_game_won(self):
-        
+
         return 0
-        
+
         """ Run after day/night to determine if game is over and who is_game_won
         Returns:
             0 --> keep playing
@@ -129,7 +129,7 @@ class Game:
                     assassins_count += 1
                 else:
                     good_count += 1
-        
+
         if good_count == 0 and assassins_count > 0:
             return 1
         if good_count == 0 and assassins_count == 0:
@@ -160,14 +160,14 @@ class Game:
                     print("Wait a random number of seconds")
             elif str(this_role) == str(self.order[i+1]):
                 await assassin_turn(self, (this_role, self.order[i+1]) )
-                    
+
     def player_from_name(self, name):
         for player in self.players:
             if player.get_name() == name:
                 return player
         else:
             return None
-    
+
     async def send_to_all(self, msg):
         await self.client.get_channel(self.CHANNEL_ID).send(msg)
 
