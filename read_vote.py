@@ -1,5 +1,6 @@
 def is_dead_ghost(player):
-    return (player.roles[0].name == "ghost" and player.roles[0].is_dead()) or (player.roles[1].name == "ghost" and player.roles[1].is_dead())
+    return (player.roles[0].name == "ghost" and player.roles[0].is_dead()) or \
+    (player.roles[1].name == "ghost" and player.roles[1].is_dead())
 
 async def read_vote(game):
     votes = dict()
@@ -14,21 +15,28 @@ async def read_vote(game):
                 if msg.content.split(" ")[1].isdigit():
                     if int(msg.content.split(" ")[1]) in range(len(game.players)):
                         return True
+            elif msg.content == "!tie":
+                    return True
         return False
 
     voting_complete = False
     while not voting_complete:
         msg = await game.client.wait_for("message", check=_check)
-        votes[msg.author.name] = msg.content.split(" ")[1]
 
-        print(votes)
+        if msg.content == "!tie":
+            game.tie_count[game.players.index(game.player_from_name(msg.author.name))] = True
 
-        all_votes_tallied = True
-        for player,vote in votes.items():
-            all_votes_tallied = all_votes_tallied and vote is not None
-        
-        voting_complete = all_votes_tallied
-    
+        else:
+            votes[msg.author.name] = msg.content.split(" ")[1]
+
+            print(votes)
+
+            all_votes_tallied = True
+            for player,vote in votes.items():
+                all_votes_tallied = all_votes_tallied and vote is not None
+
+            voting_complete = all_votes_tallied
+
     for player,vote in votes.items():
         votes_tally[int(vote)] += 2 if is_dead_ghost(game.player_from_name(player)) else 1
 
@@ -40,7 +48,7 @@ async def read_vote(game):
             killed_score = tally
         elif tally == killed_score:
             killed.append(player)
-    
+
     if len(killed) >= 2:
         print("tie")
     else:

@@ -29,4 +29,4 @@ def t():
     client.run(input("Enter token:"))"""
 
 if __name__ == "__main__":
-    client.run("NzE0NDgzNDM2NzE4NTIyNTA4.XsvU6A.SyWBtGsAjlYoDJwNCJabp-D_wNI")
+    client.run("NzE0NDgzNDM2NzE4NTIyNTA4.Xtf7Nw.aQUNXWABf48JFAobRKe1yJ-gnKk")

@@ -20,14 +20,19 @@ class Game:
 
         self.CHANNEL_ID = 714714388166082573
 
-        a1, a2, n, c = [Assassin(), Assassin(), Nurse(), Cook()]
+        a1, a2, n, c = [Assassin(), Assassin(), Villager(), Cook()]
 
         roles = [a1, a2, n, c]
         #roles += [Villager()] * 1
         #random.shuffle(roles)
 
         self.order = [a1, a2, n, c]
+        """
 
+        n, c = Villager(), Villager()
+        roles = [n, c]
+        self.order = [n, c]
+        """
         members = list()
         for user in client.users:
             #if not user.bot:
@@ -37,10 +42,13 @@ class Game:
             if len(members) == 2:
                 break
 
+        self.tie_count = list()
         self.players = list()
         for i in range(0,len(members)):
             self.players.append(Player(members[i], (roles[2*i], roles[2*i+1])))
             print("player " + self.players[i].get_name() + " is " + self.players[i].roles[0].name + " and " + self.players[i].roles[1].name)
+            self.tie_count.append(False)
+
 
         self.is_assassin_turn = False
 
@@ -109,9 +117,6 @@ class Game:
         return list(player.get_name() for player in self.players)
 
     def is_game_won(self):
-
-        return 0
-
         """ Run after day/night to determine if game is over and who is_game_won
         Returns:
             0 --> keep playing
@@ -130,10 +135,10 @@ class Game:
                 else:
                     good_count += 1
 
+        if (good_count == 0 and assassins_count == 0) or False not in self.tie_count:
+            return 3
         if good_count == 0 and assassins_count > 0:
             return 1
-        if good_count == 0 and assassins_count == 0:
-            return 3
         if good_count > 0 and assassins_count > 0:
             return 0
         if good_count > 0 and assassins_count == 0:
@@ -141,6 +146,7 @@ class Game:
 
     async def game_loop(self):
         while(self.is_game_won() == 0):
+            self.tie_count = [False for _ in self.players]
             await self.night()
             await self.end_night()
             if self.is_game_won() != 0:
@@ -180,7 +186,6 @@ class Game:
                 if effect == 'A' and not 'N' in effects:
                     await player.kill_card(self)
         self.clear_cups()
-        print(self.cups)
         print(self.get_lives())
         print("ending night end")
 

@@ -3,3 +3,4 @@
 - cook, allow to check two cards
 - set_permissions
 - announce the role of killed cards
+- I checked one card then had to say none twice for it to pass

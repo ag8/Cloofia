@@ -13,16 +13,17 @@ class Role:
     def night_role(self, game):
         pass
 
+
     def is_alive(self):
         return self.alive
-    
+
     def is_dead(self):
         return not self.is_alive()
-    
+
     def is_usable(self):
         return self.alive and not self.is_used and not \
             self.night_teachered
-    
+
     def get_player(self):
         return self.player
 
@@ -42,4 +43,44 @@ class Role:
 
     def __str__(self):
         return self.name
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def replenish(self):
+        self.is_used = False
