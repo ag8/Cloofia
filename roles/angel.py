@@ -4,7 +4,7 @@ class Angel(Role):
     def __init__(self):
         super().__init__("Angel")
 
-    def night_play(self):
+    async def night_play(self):
         print("Angel Night")
 
         await self.get_player().send_dm(f"Select the player your would like to save or \"none\" if you want to pass your turn.")
@@ -33,7 +33,7 @@ class Angel(Role):
 
             card = int(await self.client.wait_for("message", check=_check_card_is_dead).content)
 
-            game.players[int(player.content)].roles[card].replenish()
+            game.players[int(player.content)].roles[card].revive()
 
         print("Angel Night end")
 

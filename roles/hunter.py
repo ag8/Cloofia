@@ -4,9 +4,6 @@ class Hunter(Role):
     def __init__(self):
         super().__init__("Hunter")
 
-    def night_role(self):
-        return
-
     async def on_death(self, game):
         game.send_to_all("Hunter, choose a player to kill")
 

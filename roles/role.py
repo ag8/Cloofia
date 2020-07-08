@@ -36,51 +36,29 @@ class Role:
     async def send_dm(self, msg):
         await self.player.send_dm(msg)
 
-    def kill(self, game):
+    async def kill(self, game):
         self.on_death(game)
         self.alive = False
         self.is_used = False
 
+        # l1 - lover that died first
+        async def kill_lover(lovers):
+            l1, l2 = lovers
+            await game.send_to_all(f"{l2.get_player()} was {l1.get_player()}'s lover, so their {str(l2)} dies.")
+            l2.kill(game)
+
+        # check if lover cards
+        if self is game.lovers[0]:
+            kill_lover(game.lovers)
+        elif self is game.lovers[1]:
+            kill_lover(game.lovers[::-1])
+
     def __str__(self):
         return self.name
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    def revive(self):
+        self.alive = True
+        self.replenish()
 
     def replenish(self):
         self.is_used = False
